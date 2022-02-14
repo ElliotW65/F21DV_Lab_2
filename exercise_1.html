@@ -3,17 +3,108 @@
 
 <head>
     <script src='https://d3js.org/d3.v7.min.js'></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    <style>
+        .pulse {
+            border: 1px solid blue;
+            fill: lightblue;
+            stroke: green;
+            -webkit-transform: scale(1);
+            -webkit-transform-origin: 50% 50%;
+            transform: scale(1);
+            transform-origin: 50% 50%;
+        }
+        .pulse:hover {
+            -webkit-animation-name: pulsar;
+            -webkit-animation-duration: 0.8s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-direction: alternate;
+            animation-name: pulsar;
+            animation-duration: 0.8s;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+            -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+        }
+        @keyframes pulsar {
+            from {
+                fill: green;
+            }
+            to {
+                fill: green;
+                transform: scale(2,2);
+                transform-origin: 50% 50%;
+            }
+        }
+    </style>
 
     <script>
+            
+            //const data = []
+
+/*             for(let i = 0; i<6; i++) {
+                data.push({x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*20)})
+            } */
+
+            var data = [{x:1, y:2}, {x:2, y:4}, {x:4, y:6}, {x:6, y:8}, {x:8, y:10}, {x:10, y:12}, {x:12, y:14},]
+            
+            console.log(data);
+
+            var xScale = d3.scaleLinear()
+                        .domain([0, 20])
+                        .range([50, 450])
+            var yScale = d3.scaleLinear()
+                        .domain([0, 20])
+                        .range([450, 50])
+
+            //const margin = 100;
+
+            // Append SVG Object to the Page
+            const svg = d3.select("body")
+                .append("svg")
+                .attr('width', 600)
+                .attr('height', 600 )
+                .append("g")
+                .attr("transform","translate(" + 50 + "," + 50 + ")");
+
+            svg.append("g")
+                .attr("transform", "translate(0," + 450 + ")")
+                .call(d3.axisBottom(xScale))
+                
+            svg.append("g")
+                .attr("transform", "translate(50," + 0 + ")")
+                .call(d3.axisLeft(yScale));
+
+            svg.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "blue")
+                .attr("stroke-width", 1.5)
+                .attr("d", d3.line()
+                .x(function(d) { console.log(d.x); return xScale(d.x) })
+                .y(function(d) { return yScale(d.y) })
+            );
+
+            console.log(xScale(2));
+
+            svg.append('g')
+                .selectAll('dot')
+                .data(data)
+                .enter()
+                .append('circle')
+                .attr('cx', function(d) { console.log(d); return xScale(d.x); })
+                .attr('cy', function(d) { return yScale(d.y); })
+                .attr('r', 5)
+                .style('fill', "green")
+                .classed('pulse', true);
+
 
 
     </script>
+
+
 
 </body>
 
