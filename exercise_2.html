@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src='https://d3js.org/d3.v7.min.js'></script>
+</head>
+
+<body>
+    <style>
+        .info:hover {
+            opacity: 0.2;
+        }
+
+    </style>
+
+    <script>
+
+        var data = ["Circle", "rect", "Triangle"]
+
+
+        d3.select('body')
+            .selectAll('button')
+            .data(data)
+            .enter()
+            .append('button')
+            .attr('id', function(d) { return d; })
+            .attr('type', 'button')
+            .attr('onclick', 'shape(this)')
+            .text(function(d) { return d; })
+            .attr('value', function(d) { return d; })
+            .attr('position', 'static');
+
+        var svg = d3.select('body')
+            .append('svg')
+            .attr('width', 600)
+            .attr('height', 600 )
+
+
+        function shape(element, shape) {
+
+            console.log("Called");
+/*             d3.select('body')
+                .selectAll(shape)
+                .enter()
+                .append(shape) */
+            
+            if(element.value == "rect") {
+                console.log("In funtion")
+                svg.append('rect')
+                .attr("x", 50)
+                .attr("y", 50)
+                .attr("width", 100)
+                .attr("height", 100)
+                .attr("fill", 'blue')
+                .classed('info', true);
+
+
+/*                 d3.select('body')
+                .selectAll(element.value)
+                .enter()
+                .append(element.value)
+                .attr("x", 50)
+                .attr("y", 50)
+                .attr("width", 50)
+                .attr("height", 50)
+                .attr("fill", 'blue'); */
+
+            }
+/*             else if(element.Shape == "circle") {
+                exTwelve.append(element.Shape)
+                .attr("cx", element.x)
+                .attr("cy", element.y)
+                .attr("r", element.rx);
+            } */
+
+
+        }
+
+
+
+
+    </script>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     </button>
+
+
+
+</body>
+
+</html>
