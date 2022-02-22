@@ -92,11 +92,12 @@
 
             g.append("text")
                 .attr('class', 'val')
+                .attr("text-anchor", "middle")
                 .attr('x', function() {
-                    return x(d.year);
+                    return x(i.year) + x.bandwidth() / 2;
                 })
                 .attr('y', function() {
-    
+                    return y(i.value) - 15; 
                 })
                 .text( function(d) { return '$' + i.value; } ); // Value of the text
             }
