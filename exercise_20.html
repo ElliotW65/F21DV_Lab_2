@@ -8,9 +8,9 @@
 <body>
 
 <!-- Add buttons -->
-    <button onclick="update(data1)" value="data1">Variable 1</button>
-    <button onclick="update(data2)" value="data2">Variable 2</button>
-    <button onclick="update(data3)" value="data3">Variable 3</button>
+    <button onclick="update(data1, this.value, colours)" value="data1">Variable 1</button>
+    <button onclick="update(data2, this.value, colours)" value="data2">Variable 2</button>
+    <button onclick="update(data3, this.value, colours)" value="data3">Variable 3</button>
 
     <script>
         // create 2 data_set
@@ -30,8 +30,15 @@
             {group: "C", value: 18}
         ];
 
+        const colours = {
+            "data1" : "#69b3a2",
+            "data2" : "#C54B84",
+            "data3" : "#4B51C5"
+
+        }
+
         // set the dimensions and margins of the graph
-        const margin = {top: 30, right: 30, bottom: 70, left: 60};
+        const margin = {top: 70, right: 30, bottom: 70, left: 60};
         const width = 460 - margin.left - margin.right;
         const height = 400 - margin.top - margin.bottom;
 
@@ -65,23 +72,56 @@
             .call(d3.axisLeft(y));
             
         // A function that create / update the plot for a given variable:
-        function update(data) {
+        function update(data, dataset, colour) {
             var u = svg.selectAll("rect")
                 .data(data)
             u .enter()
                 .append("rect")
                 .merge(u)
+                .on("mouseover", onMouseOver)
+                .on("mouseout", onMouseOut)
                 .transition()
                 .duration(1000)
                 .attr("x", function(d) { return x(d.group); })
                 .attr("y", function(d) { return y(d.value); })
                 .attr("width", x.bandwidth())
                 .attr("height", function(d) { return height - y(d.value); })
-                .attr("fill", "#69b3a2")
+                .attr("fill", function(d) {
+                    for(i in colours) {
+                        if(i == dataset) {
+                            return colours[i];
+                        }
+                    }
+                });
+
+
+        }
+
+        function onMouseOver(d, i) {
+            console.log("Working");
+            d3.select("svg")
+                .select("g")
+                .append("text")
+                .attr('class', 'val')
+                .attr("text-anchor", "middle")
+                .attr('x', function() {
+                    return x(i.group) + x.bandwidth() / 2;
+                })
+                .attr('y', function() {
+                    return y(i.value) - 15; 
+                })
+                .text( function(d) { return i.value; } ); // Value of the text
+
+        }
+
+        function onMouseOut(d, i) {
+            d3.selectAll('.val')
+                .remove()
+
         }
 
         // Initialize the plot with the first dataset
-        update(data1)
+        update(data1, "data1", colours)
     </script>
 
 </body>
