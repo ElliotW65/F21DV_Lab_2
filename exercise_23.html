@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src='https://d3js.org/d3.v7.min.js'></script>
+</head>
+
+<body>
+
+<!-- Add buttons -->
+    <button onclick="update(data1, this.value, colours)" value="data1">Variable 1</button>
+    <button onclick="update(data2, this.value, colours)" value="data2">Variable 2</button>
+    <button onclick="update(data3, this.value, colours)" value="data3">Variable 3</button>
+    <button onclick="update(data4, this.value, colours)" value="data4">Variable 4</button>
+
+    <script>
+        // create 2 data_set
+        const data1 = [
+            {x: 1, value: 5},
+            {x: 2, value: 20},
+            {x: 3, value: 9},
+            {x: 4, value: 5},
+            {x: 5, value: 20},
+            {x: 6, value: 9}
+        ];
+        const data2 = [
+            {x: 1, value: 15},
+            {x: 2, value: 14},
+            {x: 3, value: 13},
+            {x: 4, value: 12},
+            {x: 5, value: 11},
+            {x: 6, value: 10}
+        ];
+        const data3 = [
+            {x: 1, value: 1},
+            {x: 2, value: 2},
+            {x: 3, value: 3},
+            {x: 4, value: 4},
+            {x: 5, value: 5},
+            {x: 6, value: 6}
+        ];
+
+        const data4 = [
+            {x: 0, value: 0},
+            {x: 1, value: 5},
+            {x: 2, value: 10},
+            {x: 3, value: 15},
+            {x: 4, value: 20},
+            {x: 5, value: 15},
+            {x: 6, value: 10},
+            {x: 7, value: 5},
+            {x: 8, value: 0},
+        ];
+
+        const colours = {
+            "data1" : "#69b3a2",
+            "data2" : "#C54B84",
+            "data3" : "#4B51C5",
+            "data4" : "#F74A54"
+
+        }
+
+        // set the dimensions and margins of the graph
+        const margin = {top: 70, right: 30, bottom: 70, left: 60};
+        const width = 460 - margin.left - margin.right;
+        const height = 400 - margin.top - margin.bottom;
+
+        // append the svg object to the body of the page
+        var svg = d3.select('body')
+            .append('div')
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+        // X axis
+        var x = d3.scaleBand()
+            .range([ 0, width ])
+            .domain(data1.map(function(d) { return d.x; }))
+            .padding(0.2);
+
+        var xAxis = svg.append("g")
+            .attr("transform", "translate(0," + (height + 20) +")")
+            .call(d3.axisBottom(x))
+
+        // Top axis
+        var xTop = d3.scaleBand()
+        .range([ 0, width ])
+        .domain(data1.map(function(d) { return d.x; }))
+        .padding(0.2);
+
+        var xAxisTop = svg.append("g")
+            .attr("transform", "translate(0," + 0 + ")")
+            .call(d3.axisTop(x))
+
+        // Add Y axis
+        var y = d3.scaleLinear()
+            .domain([0, d3.extent(data1, function(d) { return d.value;})[1]])
+            .range([ height +20 , 0]);
+
+        var yAxis = svg.append("g")
+            .attr("class", "myYaxis")
+            .call(d3.axisLeft(y));
+
+        // Add right axis
+        var y = d3.scaleLinear()
+            .domain([0, d3.extent(data1, function(d) { return d.value;})[1]])
+            .range([ height +20, 0]);
+
+        var yAxisRight = svg.append("g")
+            .attr("transform", "translate(" + width + ", 0)")
+            .call(d3.axisRight(y));
+            
+        // A function that create / update the plot for a given variable:
+        function update(data, dataset, colour) {
+
+            console.log("Length: " + d3.extent(data, function(d) { return d.value; }));
+
+            x.domain(data.map(function(d) { return d.x; }))
+            xAxis.transition().duration(1000).call(d3.axisBottom(x))
+
+            x.domain(data.map(function(d) { return d.x; }))
+            xAxisTop.transition().duration(1000).call(d3.axisTop(x))
+
+            y.domain([0, d3.extent(data, function(d) { return d.value;})[1]+5])
+            yAxis.transition().duration(1000).call(d3.axisLeft(y))
+
+            y.domain([0, d3.extent(data, function(d) { return d.value;})[1]+5])
+            yAxisRight.transition().duration(1000).call(d3.axisRight(y))
+
+
+            var u = svg.selectAll(".line")
+                .data([data], function(d) { return d.value });
+
+            u .enter()
+                .append("path")
+                .attr("class","line")
+                .merge(u)
+                .on("mouseover", onMouseOver)
+                .on("mouseout", onMouseOut)
+                .transition()
+                .duration(1000)
+                .attr("stroke", "steelblue")
+                .attr("stroke-width", 1.5)
+                .attr("d", d3.line()
+                    .x(function(d) { return x(d.x) })
+                    .y(function(d) { return y(d.value) })
+                )
+                .attr("transform", "translate(16, 0)")
+                .attr("fill", "none")
+            
+            u.exit()
+                .transition()
+                .duration(500)
+                .remove();
+
+
+        }
+
+        function onMouseOver(d, i) {
+            d3.select("svg")
+                .select("g")
+                .append("text")
+                .attr('class', 'val')
+                .attr("text-anchor", "middle")
+                .attr('x', function() {
+                    return x(i.group) + x.bandwidth() / 2;
+                })
+                .attr('y', function() {
+                    return y(i.value) - 15; 
+                })
+                .text( function(d) { return i.value; } ); // Value of the text
+
+        }
+
+        function onMouseOut(d, i) {
+            d3.selectAll('.val')
+                .remove()
+
+        }
+
+        // Initialize the plot with the first dataset
+        update(data1, "data1", colours)
+    </script>
+
+</body>
+
+</html>
