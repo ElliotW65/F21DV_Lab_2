@@ -42,7 +42,7 @@
             "data1" : "#69b3a2",
             "data2" : "#C54B84",
             "data3" : "#4B51C5",
-            "data4" : "#4B51C5"
+            "data4" : "#F74A54"
 
         }
 
@@ -110,10 +110,10 @@
             x.domain(data.map(function(d) { return d.group; }))
             xAxisTop.transition().duration(1000).call(d3.axisTop(x))
 
-            y.domain([0, d3.extent(data, function(d) { return d.value;})[1]])
+            y.domain([0, d3.extent(data, function(d) { return d.value;})[1]+5])
             yAxis.transition().duration(1000).call(d3.axisLeft(y))
 
-            y.domain([0, d3.extent(data, function(d) { return d.value;})[1]])
+            y.domain([0, d3.extent(data, function(d) { return d.value;})[1]+5])
             yAxisRight.transition().duration(1000).call(d3.axisRight(y))
 
 
