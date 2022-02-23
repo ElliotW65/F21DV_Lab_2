@@ -159,6 +159,7 @@
 
         }
 
+        //ADD LATER IF THERE IS TIME
         function onMouseOver(d, i) {
             d3.select("svg")
                 .select("g")
@@ -166,7 +167,7 @@
                 .attr('class', 'val')
                 .attr("text-anchor", "middle")
                 .attr('x', function() {
-                    return x(i.group) + x.bandwidth() / 2;
+                    return x(i.x) + x.bandwidth() / 2;
                 })
                 .attr('y', function() {
                     return y(i.value) - 15; 
