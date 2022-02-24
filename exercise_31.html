@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src='https://d3js.org/d3.v7.min.js'></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <style>
+
+        div.callout {	
+            position: absolute;			
+            text-align: center;			
+            width: 60px;					
+            height: 40px;					
+            padding: 2px;				
+            font-family: 'Roboto', sans-serif;
+            color: white;	
+            background: rgb(110, 0, 40);	
+            border: 0px;		
+            border-radius: 8px;				
+        }
+    
+    </style>
+
+    <script>
+        var width = 400, height = 400;
+
+        // setup svg
+        var svg = d3.select('body').append('svg').attr('width',width).attr('height',height);
+
+        var div = d3.select("body").append("div")	
+            .attr("class", "callout")				
+            .style("opacity", 0);
+
+        d3.csv("exercise_29_data.csv").then( function(data) {
+            // generate some random data
+            var numNodes = data.length;
+
+            console.log(numNodes);
+
+            // Interpolating Turbo colour scheme
+            var color = d3.scaleSequential().domain([0,25]).interpolator(d3.interpolateTurbo);
+
+            var colorViridis = d3.scaleSequential().domain([0,25]).interpolator(d3.interpolateViridis);
+
+            var simulation = d3.forceSimulation(data)
+                .force('charge', d3.forceManyBody().strength(5))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+                .force('collision', d3.forceCollide().radius(function(d) {
+                    return d.radius
+                }))
+                .on('tick', ticked);
+
+
+            function ticked() {
+                var u = d3.select('svg')
+                    .selectAll('circle')
+                    .data(data)
+                    .join('circle')
+                    .attr('fill', function(d,i) {
+                        console.log(d);
+                        return color(d.radius);
+                    })
+                    .attr('r', function(d) {
+                        return d.radius
+                    })
+                    .attr('cx', function(d) {
+                        return d.x
+                    })
+                    .attr('cy', function(d) {
+                        return d.y
+                    })
+                    .on("mouseover", function(d, i) {
+                        div.transition()		
+                            .duration(50)		
+                            .style("opacity", .9);		
+                        div	.html("Radius: " + i.radius)	
+                            .style("left", d.x + "px")		
+                            .style("top", d.y + "px")
+                        
+                        d3.select(this)
+                            .transition()		
+                            .duration(500)
+                            .style('fill', function(d,i) {
+                                return "#0e00ad";
+                            });
+                        })					
+                    .on("mouseout", function(d) {		
+                        div.transition()		
+                            .duration(500)		
+                            .style("opacity", 0);
+
+                        d3.select(this)
+                            .transition()		
+                            .duration(150)
+                            .style('fill', function(d,i) {
+                                return color(d.radius);
+                            });	
+                    });
+            }
+
+            console.log('ready..');
+        });
+
+    </script>
+
+</body>
+
+</html>
