@@ -22,7 +22,7 @@
         })
 
         // Interpolating Turbo colour scheme
-        var color = d3.scaleSequential().domain([1,numNodes]).interpolator(d3.interpolateViridis);
+        var color = d3.scaleSequential().domain([1,numNodes]).interpolator(d3.interpolateTurbo);
 
         var simulation = d3.forceSimulation(nodes)
             .force('charge', d3.forceManyBody().strength(5))
