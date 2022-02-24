@@ -3,10 +3,29 @@
 
 <head>
     <script src='https://d3js.org/d3.v7.min.js'></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
+    <style>
+
+        div.callout {	
+            position: absolute;			
+            text-align: center;			
+            width: 60px;					
+            height: 40px;					
+            padding: 2px;				
+            font-family: 'Roboto', sans-serif;
+            color: white;	
+            background: rgb(110, 0, 40);	
+            border: 0px;		
+            border-radius: 8px;				
+        }
+    
+    </style>
 
     <script>
         var width = 400, height = 400;
@@ -14,9 +33,15 @@
         // setup svg
         var svg = d3.select('body').append('svg').attr('width',width).attr('height',height);
 
+        var div = d3.select("body").append("div")	
+            .attr("class", "callout")				
+            .style("opacity", 0);
+
         d3.csv("exercise_29_data.csv").then( function(data) {
             // generate some random data
             var numNodes = data.length;
+
+            console.log(numNodes);
 
             // Interpolating Turbo colour scheme
             var color = d3.scaleSequential().domain([1,numNodes]).interpolator(d3.interpolateTurbo);
@@ -29,12 +54,11 @@
                 }))
                 .on('tick', ticked);
 
+
             function ticked() {
-                var u = svg.selectAll('g')
+                var u = d3.select('svg')
+                    .selectAll('circle')
                     .data(data)
-                    .enter()
-                    .append('g')
-                    .append('circle')
                     .join('circle')
                     .attr('fill', function(d,i) {
 
@@ -49,36 +73,23 @@
                     .attr('cy', function(d) {
                         return d.y
                     })
-                    .on("mouseover", onMouseOver)
-                    .on("mouseout", onMouseOut)
+                    .on("mouseover", function(d, i) {
+                        div.transition()		
+                            .duration(200)		
+                            .style("opacity", .9);		
+                        div	.html("Radius: " + i.radius)	
+                            .style("left", d.x + "px")		
+                            .style("top", d.y + "px");	
+                        })					
+                    .on("mouseout", function(d) {		
+                        div.transition()		
+                            .duration(500)		
+                            .style("opacity", 0);	
+                    });
             }
 
             console.log('ready..');
         });
-
-        function onMouseOver(d, i) {
-            console.log("Working");
-            console.log(this);
-            d3.select(this.parentNode)
-                .append("text")
-                .attr('class', 'val')
-                .attr("text-anchor", "middle")
-                .attr('dx', function(d) {
-                    console.log(d);
-                        return d.x
-                    })
-                .attr('dy', function(d) {
-                        return d.y
-                    })
-                .text( "Circle" ); // Value of the text
-
-        }
-
-        function onMouseOut(d, i) {
-            d3.selectAll('.val')
-                .remove()
-
-        }
 
     </script>
 
