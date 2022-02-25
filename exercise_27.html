@@ -63,22 +63,14 @@
             var updatePath = path.attr("d", arc)
                 .transition()
                 .duration(1000)
-                .attrTween("d", tweenFunc)
-/*                 .attrTween("d", function (d) {
-                    console.log(d._current)
-                    var i = d3.interpolate(d.endAngle, d.startAngle);
-                    return function (t) {
-                    d.startAngle = i(t);
-                    return arc(d);
-                }
-                }); */
+                .attrTween("d", tweenFunction)
+
                 
-            function tweenFunc(a) {
-                console.log(this._current);
-                var i = d3.interpolate(this._current, a);
-                this._current = i(0);
+            function tweenFunction(newAngle) {
+                var inter = d3.interpolate(this.currentAngle, newAngle);
+                this.currentAngle = inter(0);
                 return function(t) {
-                    return arc(i(t));
+                    return arc(inter(t));
                 };
             }
         };
