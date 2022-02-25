@@ -70,7 +70,7 @@
                 var inter = d3.interpolate(this.currentAngle, newAngle);
                 this.currentAngle = inter(0);
                 return function(t) {
-                    return arc(inter(t));
+                    return arc(inter(t)); 
                 };
             }
         };
